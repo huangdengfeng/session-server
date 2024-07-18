@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func CreateDefaultInterceptor() grpc.ServerOption {
+func createDefaultInterceptor() grpc.ServerOption {
 	return grpc.ChainUnaryInterceptor(createContextHeaderInterceptor(), createAcclogInterceptor(), createErrInterceptor(), createValidateInterceptor())
 }
 

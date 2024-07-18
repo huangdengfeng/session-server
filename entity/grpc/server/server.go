@@ -18,7 +18,7 @@ var kep = keepalive.EnforcementPolicy{
 }
 
 func Start(s pb.SessionServer) *grpc.Server {
-	var grpcServer = grpc.NewServer(grpc.KeepaliveParams(kp), grpc.KeepaliveEnforcementPolicy(kep), CreateDefaultInterceptor())
+	var grpcServer = grpc.NewServer(grpc.KeepaliveParams(kp), grpc.KeepaliveEnforcementPolicy(kep), createDefaultInterceptor())
 	pb.RegisterSessionServer(grpcServer, s)
 
 	go func() {

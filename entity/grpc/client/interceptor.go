@@ -1,4 +1,4 @@
-package server
+package client
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 
 const DefaultTimeout = 3 * time.Second
 
-func CreateDefaultInterceptor() grpc.DialOption {
+func createDefaultInterceptor() grpc.DialOption {
 	return grpc.WithChainUnaryInterceptor(createContextHeaderInterceptor(), createAcclogInterceptor(), createDefaultTimeoutInterceptor(), createErrInterceptor())
 }
 
