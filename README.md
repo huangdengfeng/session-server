@@ -12,8 +12,10 @@ service Session {
   rpc SetAttribute(SetAttributeReq) returns(SetAttributeResp){}
   // 获取属性
   rpc GetAttribute(GetAttributeReq) returns(GetAttributeResp){}
-  // 获取全部属性
-  rpc GetAllAttribute(GetAllAttributeReq) returns(GetAllAttributeResp){}
+  // 获取全部属性及内容
+  rpc Get(GetReq) returns(GetResp){}
+  // 获取数据
+  rpc GetData(GetDataReq) returns(GetDataResp){}
   // 删除属性
   rpc RemoveAttribute(RemoveAttributeReq) returns(RemoveAttributeResp){}
   // 销毁
