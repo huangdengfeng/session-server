@@ -1,0 +1,26 @@
+server:
+  listen: :6100
+redis:
+  addrs:
+    - localhost:6379
+  username:
+  password:
+  # defaut db
+  db: 0
+  dialTimeout: 1
+  readTimeout: 3
+  writeTimeout: 3
+  poolSize: 20
+  poolTimeout: 6
+  minIdleConns: 1
+  connMaxIdleTime: 60
+  connMaxLifetime: 1800
+log:
+  filename: logs/app.log
+  # M
+  maxSize: 1024
+  # Day
+  maxAge: 10
+  level: debug
+  reportCaller: false
+  outputToConsole: true

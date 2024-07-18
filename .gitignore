@@ -1,0 +1,33 @@
+# system ignore
+.DS_Store
+Thumbs.db
+*.orig
+
+# target
+package/
+target/
+
+# idea ignore
+.idea/
+*.ipr
+*.iml
+*.iws
+*.factorypath
+
+# temp ignore
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+tmp
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
