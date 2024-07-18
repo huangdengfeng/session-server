@@ -15,12 +15,13 @@ type SessionService struct {
 }
 
 const (
+	DataKey                = "_data"
 	MaxInactiveIntervalKey = "_maxInactiveInterval"
 	CreateTimeKey          = "_createTime"
 	LastAccessTimeKey      = "_lastAccessTimeKey"
 )
 
-var InternalKey = []string{MaxInactiveIntervalKey, CreateTimeKey, LastAccessTimeKey}
+var InternalKey = []string{DataKey, MaxInactiveIntervalKey, CreateTimeKey, LastAccessTimeKey}
 
 func NewSessionService(redisDao *cache.RedisDao) *SessionService {
 	return &SessionService{redisDao: redisDao}
@@ -31,10 +32,14 @@ func NewSessionService(redisDao *cache.RedisDao) *SessionService {
 //	@Description: 创建session
 //	@param ctx
 //	@param maxInactiveInterval 超时时间单位秒
+//	@param data 超时时间单位秒
 //	@param attributes 属性，可以为空
 //	@return string sessionId
 //	@return error
-func (s *SessionService) Create(ctx context.Context, maxInactiveInterval int64, attributes map[string][]byte) (string, error) {
+func (s *SessionService) Create(ctx context.Context, maxInactiveInterval int64, data []byte, attributes map[string][]byte) (string, error) {
+	if len(data) == 0 {
+		return "", errs.BasArgs.Newf("create data must not empty")
+	}
 	if attributes == nil {
 		attributes = make(map[string][]byte)
 	}
@@ -43,7 +48,7 @@ func (s *SessionService) Create(ctx context.Context, maxInactiveInterval int64, 
 			return "", errs.AttrKeyLimit.Newf(k)
 		}
 	}
-
+	attributes[DataKey] = data
 	attributes[MaxInactiveIntervalKey] = []byte(strconv.FormatInt(maxInactiveInterval, 10))
 	attributes[CreateTimeKey] = []byte(strconv.FormatInt(time.Now().Unix(), 10))
 	fv := make([]any, 0, len(attributes)*2+len(InternalKey))
@@ -122,20 +127,36 @@ func (s *SessionService) GetMaxInactiveInterval(ctx context.Context, sessionId s
 	return int64(expireSeconds), nil
 }
 
-func (s *SessionService) GetAllAttribute(ctx context.Context, sessionId string) (map[string][]byte, error) {
+func (s *SessionService) Get(ctx context.Context, sessionId string) ([]byte, map[string][]byte, error) {
+	maxInactiveInterval, err := s.GetMaxInactiveInterval(ctx, sessionId)
+	if err != nil {
+		return nil, nil, err
+	}
+	value, err := s.redisDao.HgetAll(ctx, sessionId)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := s.redisDao.Expire(ctx, sessionId, time.Duration(maxInactiveInterval)*time.Second); err != nil {
+		return nil, nil, err
+	}
+	data := value[DataKey]
+	for _, v := range InternalKey {
+		delete(value, v)
+	}
+	return data, value, nil
+}
+
+func (s *SessionService) GetData(ctx context.Context, sessionId string) ([]byte, error) {
 	maxInactiveInterval, err := s.GetMaxInactiveInterval(ctx, sessionId)
 	if err != nil {
 		return nil, err
 	}
-	value, err := s.redisDao.HgetAll(ctx, sessionId)
+	value, err := s.redisDao.Hget(ctx, sessionId, DataKey)
 	if err != nil {
 		return nil, err
 	}
 	if err := s.redisDao.Expire(ctx, sessionId, time.Duration(maxInactiveInterval)*time.Second); err != nil {
 		return nil, err
-	}
-	for _, v := range InternalKey {
-		delete(value, v)
 	}
 	return value, nil
 }

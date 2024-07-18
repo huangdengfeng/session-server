@@ -68,6 +68,17 @@ func (m *CreateReq) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if len(m.GetData()) < 1 {
+		err := CreateReqValidationError{
+			field:  "Data",
+			reason: "value length must be at least 1 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for Attributes
 
 	if len(errors) > 0 {
@@ -707,22 +718,21 @@ var _ interface {
 	ErrorName() string
 } = GetAttributeRespValidationError{}
 
-// Validate checks the field values on GetAllAttributeReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetAllAttributeReq) Validate() error {
+// Validate checks the field values on GetReq with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetReq) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetAllAttributeReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetAllAttributeReqMultiError, or nil if none found.
-func (m *GetAllAttributeReq) ValidateAll() error {
+// ValidateAll checks the field values on GetReq with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in GetReqMultiError, or nil if none found.
+func (m *GetReq) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetAllAttributeReq) validate(all bool) error {
+func (m *GetReq) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -730,7 +740,7 @@ func (m *GetAllAttributeReq) validate(all bool) error {
 	var errors []error
 
 	if utf8.RuneCountInString(m.GetSessionId()) < 32 {
-		err := GetAllAttributeReqValidationError{
+		err := GetReqValidationError{
 			field:  "SessionId",
 			reason: "value length must be at least 32 runes",
 		}
@@ -741,19 +751,18 @@ func (m *GetAllAttributeReq) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return GetAllAttributeReqMultiError(errors)
+		return GetReqMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetAllAttributeReqMultiError is an error wrapping multiple validation errors
-// returned by GetAllAttributeReq.ValidateAll() if the designated constraints
-// aren't met.
-type GetAllAttributeReqMultiError []error
+// GetReqMultiError is an error wrapping multiple validation errors returned by
+// GetReq.ValidateAll() if the designated constraints aren't met.
+type GetReqMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetAllAttributeReqMultiError) Error() string {
+func (m GetReqMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -762,11 +771,11 @@ func (m GetAllAttributeReqMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetAllAttributeReqMultiError) AllErrors() []error { return m }
+func (m GetReqMultiError) AllErrors() []error { return m }
 
-// GetAllAttributeReqValidationError is the validation error returned by
-// GetAllAttributeReq.Validate if the designated constraints aren't met.
-type GetAllAttributeReqValidationError struct {
+// GetReqValidationError is the validation error returned by GetReq.Validate if
+// the designated constraints aren't met.
+type GetReqValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -774,24 +783,22 @@ type GetAllAttributeReqValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetAllAttributeReqValidationError) Field() string { return e.field }
+func (e GetReqValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetAllAttributeReqValidationError) Reason() string { return e.reason }
+func (e GetReqValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetAllAttributeReqValidationError) Cause() error { return e.cause }
+func (e GetReqValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetAllAttributeReqValidationError) Key() bool { return e.key }
+func (e GetReqValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetAllAttributeReqValidationError) ErrorName() string {
-	return "GetAllAttributeReqValidationError"
-}
+func (e GetReqValidationError) ErrorName() string { return "GetReqValidationError" }
 
 // Error satisfies the builtin error interface
-func (e GetAllAttributeReqValidationError) Error() string {
+func (e GetReqValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -803,14 +810,14 @@ func (e GetAllAttributeReqValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetAllAttributeReq.%s: %s%s",
+		"invalid %sGetReq.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetAllAttributeReqValidationError{}
+var _ error = GetReqValidationError{}
 
 var _ interface {
 	Field() string
@@ -818,24 +825,23 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetAllAttributeReqValidationError{}
+} = GetReqValidationError{}
 
-// Validate checks the field values on GetAllAttributeResp with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetAllAttributeResp) Validate() error {
+// Validate checks the field values on GetResp with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetResp) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetAllAttributeResp with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetAllAttributeRespMultiError, or nil if none found.
-func (m *GetAllAttributeResp) ValidateAll() error {
+// ValidateAll checks the field values on GetResp with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in GetRespMultiError, or nil if none found.
+func (m *GetResp) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetAllAttributeResp) validate(all bool) error {
+func (m *GetResp) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -844,22 +850,23 @@ func (m *GetAllAttributeResp) validate(all bool) error {
 
 	// no validation rules for SessionInvalid
 
+	// no validation rules for Data
+
 	// no validation rules for Attributes
 
 	if len(errors) > 0 {
-		return GetAllAttributeRespMultiError(errors)
+		return GetRespMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetAllAttributeRespMultiError is an error wrapping multiple validation
-// errors returned by GetAllAttributeResp.ValidateAll() if the designated
-// constraints aren't met.
-type GetAllAttributeRespMultiError []error
+// GetRespMultiError is an error wrapping multiple validation errors returned
+// by GetResp.ValidateAll() if the designated constraints aren't met.
+type GetRespMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetAllAttributeRespMultiError) Error() string {
+func (m GetRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -868,11 +875,11 @@ func (m GetAllAttributeRespMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetAllAttributeRespMultiError) AllErrors() []error { return m }
+func (m GetRespMultiError) AllErrors() []error { return m }
 
-// GetAllAttributeRespValidationError is the validation error returned by
-// GetAllAttributeResp.Validate if the designated constraints aren't met.
-type GetAllAttributeRespValidationError struct {
+// GetRespValidationError is the validation error returned by GetResp.Validate
+// if the designated constraints aren't met.
+type GetRespValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -880,24 +887,22 @@ type GetAllAttributeRespValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetAllAttributeRespValidationError) Field() string { return e.field }
+func (e GetRespValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetAllAttributeRespValidationError) Reason() string { return e.reason }
+func (e GetRespValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetAllAttributeRespValidationError) Cause() error { return e.cause }
+func (e GetRespValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetAllAttributeRespValidationError) Key() bool { return e.key }
+func (e GetRespValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetAllAttributeRespValidationError) ErrorName() string {
-	return "GetAllAttributeRespValidationError"
-}
+func (e GetRespValidationError) ErrorName() string { return "GetRespValidationError" }
 
 // Error satisfies the builtin error interface
-func (e GetAllAttributeRespValidationError) Error() string {
+func (e GetRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -909,14 +914,14 @@ func (e GetAllAttributeRespValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetAllAttributeResp.%s: %s%s",
+		"invalid %sGetResp.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetAllAttributeRespValidationError{}
+var _ error = GetRespValidationError{}
 
 var _ interface {
 	Field() string
@@ -924,7 +929,220 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetAllAttributeRespValidationError{}
+} = GetRespValidationError{}
+
+// Validate checks the field values on GetDataReq with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetDataReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDataReq with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GetDataReqMultiError, or
+// nil if none found.
+func (m *GetDataReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDataReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetSessionId()) < 32 {
+		err := GetDataReqValidationError{
+			field:  "SessionId",
+			reason: "value length must be at least 32 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetDataReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDataReqMultiError is an error wrapping multiple validation errors
+// returned by GetDataReq.ValidateAll() if the designated constraints aren't met.
+type GetDataReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDataReqMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDataReqMultiError) AllErrors() []error { return m }
+
+// GetDataReqValidationError is the validation error returned by
+// GetDataReq.Validate if the designated constraints aren't met.
+type GetDataReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDataReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDataReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDataReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDataReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDataReqValidationError) ErrorName() string { return "GetDataReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetDataReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDataReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDataReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDataReqValidationError{}
+
+// Validate checks the field values on GetDataResp with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetDataResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDataResp with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GetDataRespMultiError, or
+// nil if none found.
+func (m *GetDataResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDataResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SessionInvalid
+
+	// no validation rules for Data
+
+	if len(errors) > 0 {
+		return GetDataRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDataRespMultiError is an error wrapping multiple validation errors
+// returned by GetDataResp.ValidateAll() if the designated constraints aren't met.
+type GetDataRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDataRespMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDataRespMultiError) AllErrors() []error { return m }
+
+// GetDataRespValidationError is the validation error returned by
+// GetDataResp.Validate if the designated constraints aren't met.
+type GetDataRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDataRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDataRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDataRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDataRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDataRespValidationError) ErrorName() string { return "GetDataRespValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetDataRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDataResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDataRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDataRespValidationError{}
 
 // Validate checks the field values on RemoveAttributeReq with the rules
 // defined in the proto definition for this message. If any rules are

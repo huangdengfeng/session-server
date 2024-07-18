@@ -22,7 +22,8 @@ const (
 	Session_Create_FullMethodName          = "/com.seezoon.session.Session/Create"
 	Session_SetAttribute_FullMethodName    = "/com.seezoon.session.Session/SetAttribute"
 	Session_GetAttribute_FullMethodName    = "/com.seezoon.session.Session/GetAttribute"
-	Session_GetAllAttribute_FullMethodName = "/com.seezoon.session.Session/GetAllAttribute"
+	Session_Get_FullMethodName             = "/com.seezoon.session.Session/Get"
+	Session_GetData_FullMethodName         = "/com.seezoon.session.Session/GetData"
 	Session_RemoveAttribute_FullMethodName = "/com.seezoon.session.Session/RemoveAttribute"
 	Session_Invalidate_FullMethodName      = "/com.seezoon.session.Session/Invalidate"
 )
@@ -37,8 +38,9 @@ type SessionClient interface {
 	SetAttribute(ctx context.Context, in *SetAttributeReq, opts ...grpc.CallOption) (*SetAttributeResp, error)
 	// 获取属性
 	GetAttribute(ctx context.Context, in *GetAttributeReq, opts ...grpc.CallOption) (*GetAttributeResp, error)
-	// 获取全部属性
-	GetAllAttribute(ctx context.Context, in *GetAllAttributeReq, opts ...grpc.CallOption) (*GetAllAttributeResp, error)
+	// 获取全部属性及内容
+	Get(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*GetResp, error)
+	GetData(ctx context.Context, in *GetDataReq, opts ...grpc.CallOption) (*GetDataResp, error)
 	// 删除属性
 	RemoveAttribute(ctx context.Context, in *RemoveAttributeReq, opts ...grpc.CallOption) (*RemoveAttributeResp, error)
 	// 销毁
@@ -83,10 +85,20 @@ func (c *sessionClient) GetAttribute(ctx context.Context, in *GetAttributeReq, o
 	return out, nil
 }
 
-func (c *sessionClient) GetAllAttribute(ctx context.Context, in *GetAllAttributeReq, opts ...grpc.CallOption) (*GetAllAttributeResp, error) {
+func (c *sessionClient) Get(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*GetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAllAttributeResp)
-	err := c.cc.Invoke(ctx, Session_GetAllAttribute_FullMethodName, in, out, cOpts...)
+	out := new(GetResp)
+	err := c.cc.Invoke(ctx, Session_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sessionClient) GetData(ctx context.Context, in *GetDataReq, opts ...grpc.CallOption) (*GetDataResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDataResp)
+	err := c.cc.Invoke(ctx, Session_GetData_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -123,8 +135,9 @@ type SessionServer interface {
 	SetAttribute(context.Context, *SetAttributeReq) (*SetAttributeResp, error)
 	// 获取属性
 	GetAttribute(context.Context, *GetAttributeReq) (*GetAttributeResp, error)
-	// 获取全部属性
-	GetAllAttribute(context.Context, *GetAllAttributeReq) (*GetAllAttributeResp, error)
+	// 获取全部属性及内容
+	Get(context.Context, *GetReq) (*GetResp, error)
+	GetData(context.Context, *GetDataReq) (*GetDataResp, error)
 	// 删除属性
 	RemoveAttribute(context.Context, *RemoveAttributeReq) (*RemoveAttributeResp, error)
 	// 销毁
@@ -145,8 +158,11 @@ func (UnimplementedSessionServer) SetAttribute(context.Context, *SetAttributeReq
 func (UnimplementedSessionServer) GetAttribute(context.Context, *GetAttributeReq) (*GetAttributeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAttribute not implemented")
 }
-func (UnimplementedSessionServer) GetAllAttribute(context.Context, *GetAllAttributeReq) (*GetAllAttributeResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllAttribute not implemented")
+func (UnimplementedSessionServer) Get(context.Context, *GetReq) (*GetResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedSessionServer) GetData(context.Context, *GetDataReq) (*GetDataResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetData not implemented")
 }
 func (UnimplementedSessionServer) RemoveAttribute(context.Context, *RemoveAttributeReq) (*RemoveAttributeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveAttribute not implemented")
@@ -221,20 +237,38 @@ func _Session_GetAttribute_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Session_GetAllAttribute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllAttributeReq)
+func _Session_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SessionServer).GetAllAttribute(ctx, in)
+		return srv.(SessionServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Session_GetAllAttribute_FullMethodName,
+		FullMethod: Session_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SessionServer).GetAllAttribute(ctx, req.(*GetAllAttributeReq))
+		return srv.(SessionServer).Get(ctx, req.(*GetReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Session_GetData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDataReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SessionServer).GetData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Session_GetData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SessionServer).GetData(ctx, req.(*GetDataReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -295,8 +329,12 @@ var Session_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Session_GetAttribute_Handler,
 		},
 		{
-			MethodName: "GetAllAttribute",
-			Handler:    _Session_GetAllAttribute_Handler,
+			MethodName: "Get",
+			Handler:    _Session_Get_Handler,
+		},
+		{
+			MethodName: "GetData",
+			Handler:    _Session_GetData_Handler,
 		},
 		{
 			MethodName: "RemoveAttribute",

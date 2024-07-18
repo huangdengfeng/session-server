@@ -12,8 +12,9 @@ service Session {
   rpc SetAttribute(SetAttributeReq) returns(SetAttributeResp){}
   // 获取属性
   rpc GetAttribute(GetAttributeReq) returns(GetAttributeResp){}
-  // 获取全部属性
-  rpc GetAllAttribute(GetAllAttributeReq) returns(GetAllAttributeResp){}
+  // 获取全部属性及内容
+  rpc Get(GetReq) returns(GetResp){}
+  rpc GetData(GetDataReq) returns(GetDataResp){}
   // 删除属性
   rpc RemoveAttribute(RemoveAttributeReq) returns(RemoveAttributeResp){}
   // 销毁
@@ -23,8 +24,9 @@ service Session {
 message CreateReq {
   // 过期周期，单位秒
   int64 max_inactive_interval = 1 [(validate.rules).int64.gt = 0];
+  bytes data = 2 [(validate.rules).bytes.min_len = 1];
   // 属性
-  map<string, bytes> attributes = 2;
+  map<string, bytes> attributes = 3;
 }
 
 message CreateResp {
@@ -52,14 +54,25 @@ message GetAttributeResp {
   bytes value = 2 ;
 }
 
-message GetAllAttributeReq {
+message GetReq {
   string session_id = 1 [(validate.rules).string.min_len = 32];
 }
 
-message GetAllAttributeResp {
+message GetResp {
   // session 过期
   bool session_invalid = 1;
-  map<string, bytes> attributes = 2;
+  bytes data = 2;
+  map<string, bytes> attributes = 3;
+}
+
+message GetDataReq {
+  string session_id = 1 [(validate.rules).string.min_len = 32];
+}
+
+message GetDataResp {
+  // session 过期
+  bool session_invalid = 1;
+  bytes data = 2;
 }
 
 message RemoveAttributeReq {

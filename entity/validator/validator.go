@@ -1,6 +1,9 @@
 package validator
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+	"session-server/entity/errs"
+)
 
 type Verifiable interface {
 	Validate() error
@@ -9,8 +12,15 @@ type Verifiable interface {
 var Validator = validator.New(validator.WithRequiredStructEnabled())
 
 func Struct(any any) error {
-	return Validator.Struct(any)
+	if err := Validator.Struct(any); err != nil {
+		return errs.BasArgs.Newf(err)
+	}
+	return nil
 }
+
 func Var(filed any, tag string) error {
-	return Validator.Var(filed, tag)
+	if err := Validator.Var(filed, tag); err != nil {
+		return errs.BasArgs.Newf(err)
+	}
+	return nil
 }
