@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/keepalive"
 	"os"
 	"session-server/entity/config"
 	c "session-server/entity/grpc/client"
@@ -45,7 +46,12 @@ func setup() {
 	server.Start(createSessionServer())
 
 	// start client
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithConnectParams(grpc.ConnectParams{MinConnectTimeout: 1 * time.Second})}
+	kacp := keepalive.ClientParameters{
+		Time:                1 * time.Minute,  // 客户端每隔1min发送一次心跳ping
+		Timeout:             10 * time.Second, // 如果没有收到服务端的心跳响应，认为连接失败的超时时间
+		PermitWithoutStream: true,             // 即使没有活动的RPC流，也允许发送心跳
+	}
+	opts := []grpc.DialOption{grpc.WithKeepaliveParams(kacp), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithConnectParams(grpc.ConnectParams{MinConnectTimeout: 1 * time.Second})}
 	opts = append(opts, c.CreateDefaultInterceptor())
 	conn, err := grpc.NewClient(config.Global.Server.Listen, opts...)
 

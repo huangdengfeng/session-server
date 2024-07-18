@@ -3,14 +3,22 @@ package server
 import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 	"net"
 	"session-server/entity/config"
 	"session-server/entity/pb"
+	"time"
 )
 
-func Start(s pb.SessionServer) *grpc.Server {
+var kp = keepalive.ServerParameters{
+	MaxConnectionIdle: 3 * time.Minute, // 如果连接空闲超过这个时间，服务端将关闭连接
+}
+var kep = keepalive.EnforcementPolicy{
+	PermitWithoutStream: true, // 空闲时候发ping ，而不是断开连接
+}
 
-	var grpcServer = grpc.NewServer(CreateDefaultInterceptor())
+func Start(s pb.SessionServer) *grpc.Server {
+	var grpcServer = grpc.NewServer(grpc.KeepaliveParams(kp), grpc.KeepaliveEnforcementPolicy(kep), CreateDefaultInterceptor())
 	pb.RegisterSessionServer(grpcServer, s)
 
 	go func() {
