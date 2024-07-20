@@ -60,5 +60,5 @@ protoc --go_out=. --go-grpc_out=. --go_opt=paths=source_relative --validate_out=
 
 2、执行命令
 ```shell
-protoc --plugin=protoc-gen-grpc-java --grpc-java_out=. -java_out=.  *.proto
+protoc --plugin=protoc-gen-grpc-java --grpc-java_out=. --java_out=. --validate_out="lang=java:."  *.proto
 ```
