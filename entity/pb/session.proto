@@ -1,7 +1,7 @@
 syntax = "proto3";
 package com.seezoon.session;
 option go_package = "github.com/seezoon-go-stub/session-server-stub;pb";
-option java_package = "com.seezoon.session.stub";
+option java_package = "com.seezoon.stub.session";
 option java_multiple_files = true;
 import "validate/validate.proto";
 
