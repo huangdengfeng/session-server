@@ -27,7 +27,7 @@ start() {
     if [ "${IN_CONTAINER}" == true ]; then
         $RUN_CMD > ${LOG_DIR}/catalina.out 2>&1
     else
-        nohup "$RUN_CMD" > ${LOG_DIR}/catalina.out 2>&1 &
+        nohup $RUN_CMD > ${LOG_DIR}/catalina.out 2>&1 &
     fi
     echo "Waiting and checking process 10s..."
     for i in {1..10}; do
